@@ -12,7 +12,7 @@ The latest jdtls runs only on Java 11 or above, but many project still use Java 
                                       (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
 					])
 #+END_SRC
-Have a look at ~\~/.emacs.d/workspace/.metadata/.plugins/org.eclipse.jdt.launching/libraryInfos.xml~. If you updated your local java path and want LSP to use the new version, try removing the ~/.emacs.d/workspace/ directory and relaunch LSP.
+Have a look at ~,~/.emacs.d/workspace/.metadata/.plugins/org.eclipse.jdt.launching/libraryInfos.xml~. If you updated your local java path and want LSP to use the new version, try removing the ~/.emacs.d/workspace/ directory and relaunch LSP.
 
 ** Reference
 [[https://github.com/emacs-lsp/lsp-java][lsp-java github home page]]
