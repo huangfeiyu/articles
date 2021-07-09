@@ -1,0 +1,6 @@
+#+title: Use dap-mode debug java web application
+* Prepare java web application
+* Start tomcat in debug mode
+* Use dap-debug template to attach debuger
+* Set break point
+* Use hydra to debug, include Step In, Step Out, Step Over, Continue, Check the Value of Variables etc.
