@@ -1,0 +1,282 @@
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(require 'package)
+(setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
+                         ("melpa" . "http://elpa.emacs-china.org/melpa/")
+                         ;;("melpa-stable" . "http://elpa.emacs-china.org/melpa-stable/")
+                         ))
+(package-initialize)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#1E1C31" "#FF8080" "#95FFA4" "#FFE9AA" "#91DDFF" "#C991E1" "#AAFFE4" "#CBE3E7"])
+ '(ansi-term-color-vector
+   [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#a1efe4" "#fcfcfa"])
+ '(aw-scope (quote frame))
+ '(company-dabbrev-downcase nil)
+ '(company-dabbrev-ignore-case nil)
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
+ '(compilation-message-face (quote default))
+ '(custom-enabled-themes (quote (doom-molokai)))
+ '(custom-safe-themes
+   (quote
+    ("da186cce19b5aed3f6a2316845583dbee76aea9255ea0da857d1c058ff003546" "cbdf8c2e1b2b5c15b34ddb5063f1b21514c7169ff20e081d39cf57ffee89bc1e" "a82ab9f1308b4e10684815b08c9cac6b07d5ccb12491f44a942d845b406b0296" "1278c5f263cdb064b5c86ab7aa0a76552082cf0189acf6df17269219ba496053" "4133d2d6553fe5af2ce3f24b7267af475b5e839069ba0e5c80416aa28913e89a" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" "1d5e33500bc9548f800f9e248b57d1b2a9ecde79cb40c0b1398dec51ee820daf" "835868dcd17131ba8b9619d14c67c127aa18b90a82438c8613586331129dda63" "4b0e826f58b39e2ce2829fab8ca999bcdc076dec35187bf4e9a4b938cb5771dc" "e6df46d5085fde0ad56a46ef69ebb388193080cc9819e2d6024c9c6e27388ba9" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "171d1ae90e46978eb9c342be6658d937a83aaa45997b1d7af7657546cae5985b" "95b0bc7b8687101335ebbf770828b641f2befdcf6d3c192243a251ce72ab1692" default)))
+ '(dap-java-default-debug-port 11550)
+ '(dired-dwim-target t)
+ '(doc-view-continuous t)
+ '(doc-view-resolution 100)
+ '(ediff-diff-program "diff")
+ '(ediff-show-ancestor t)
+ '(ediff-split-window-function (quote split-window-horizontally))
+ '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(eww-search-prefix "https://cn.bing.com/search?ensearch=1&q=")
+ '(exwm-floating-border-color "#292F37")
+ '(fci-rule-color "#858FA5")
+ '(frame-background-mode (quote dark))
+ '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
+ '(highlight-tail-colors ((("#29323c" "#1f2921") . 0) (("#2c3242" "#212928") . 20)))
+ '(hl-todo-keyword-faces
+   (quote
+    (("TODO" . "#dc752f")
+     ("NEXT" . "#dc752f")
+     ("THEM" . "#2d9574")
+     ("PROG" . "#3a81c3")
+     ("OKAY" . "#3a81c3")
+     ("DONT" . "#f2241f")
+     ("FAIL" . "#f2241f")
+     ("DONE" . "#42ae2c")
+     ("NOTE" . "#b1951d")
+     ("KLUDGE" . "#b1951d")
+     ("HACK" . "#b1951d")
+     ("TEMP" . "#b1951d")
+     ("FIXME" . "#dc752f")
+     ("XXX+" . "#dc752f")
+     ("\\?\\?\\?+" . "#dc752f"))))
+ '(indent-tabs-mode nil)
+ '(jdee-db-active-breakpoint-face-colors (cons "#100E23" "#906CFF"))
+ '(jdee-db-requested-breakpoint-face-colors (cons "#100E23" "#95FFA4"))
+ '(jdee-db-spec-breakpoint-face-colors (cons "#100E23" "#565575"))
+ '(lsp-file-watch-threshold 40000)
+ '(magit-diff-use-overlays nil)
+ '(nrepl-message-colors
+   (quote
+    ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(objed-cursor-color "#FF8080")
+ '(org-hide-emphasis-markers t)
+ '(org-startup-indented t)
+ '(package-selected-packages
+   (quote
+    (doom-themes zenburn-theme spacemacs-theme atom-one-dark-theme org-superstar web-mode recursive-narrow pdf-tools monokai-theme js2-mode expand-region yasnippet which-key use-package treemacs-projectile magit lsp-ui helm-projectile helm-lsp helm-ag flycheck company)))
+ '(pdf-view-midnight-colors (quote ("#655370" . "#fbf8ef")))
+ '(pos-tip-background-color "#FFFACE")
+ '(pos-tip-foreground-color "#272822")
+ '(require-final-newline nil)
+ '(rustic-ansi-faces
+   ["#1E1C31" "#FF8080" "#95FFA4" "#FFE9AA" "#91DDFF" "#C991E1" "#AAFFE4" "#CBE3E7"])
+ '(send-mail-function (quote smtpmail-send-it))
+ '(shr-inhibit-images t t)
+ '(tetris-x-colors
+   [[229 192 123]
+    [97 175 239]
+    [209 154 102]
+    [224 108 117]
+    [152 195 121]
+    [198 120 221]
+    [86 182 194]])
+ '(url-proxy-services (quote (("https" . "192.168.100.29:16823"))))
+ '(vc-annotate-background "#1E1C31")
+ '(vc-annotate-color-map
+   (list
+    (cons 20 "#95FFA4")
+    (cons 40 "#b8f7a6")
+    (cons 60 "#dbf0a8")
+    (cons 80 "#FFE9AA")
+    (cons 100 "#ffd799")
+    (cons 120 "#ffc488")
+    (cons 140 "#FFB378")
+    (cons 160 "#eda79b")
+    (cons 180 "#db9cbd")
+    (cons 200 "#C991E1")
+    (cons 220 "#db8bc0")
+    (cons 240 "#ed85a0")
+    (cons 260 "#FF8080")
+    (cons 280 "#d4757d")
+    (cons 300 "#aa6a7a")
+    (cons 320 "#805f77")
+    (cons 340 "#858FA5")
+    (cons 360 "#858FA5")))
+ '(vc-annotate-very-old-color nil)
+ '(w3m-key-binding (quote info))
+ '(web-mode-code-indent-offset 4)
+ '(web-mode-enable-auto-expanding t)
+ '(web-mode-enable-auto-indentation nil)
+ '(web-mode-enable-control-block-indentation nil)
+ '(weechat-color-list
+   (quote
+    (unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; lsp-java configuration start
+;; (setenv "JAVA_HOME"  "/usr/local/jdk1.8.0_202")
+(condition-case nil
+    (require 'use-package)
+  (file-error
+   (require 'package)
+   (add-to-list 'package-archives '("melpa" . "http://elpa.emacs-china.org/melpa/"))
+   (package-initialize)
+   (package-refresh-contents)
+   (package-install 'use-package)
+   (setq use-package-always-ensure t)
+   (require 'use-package)))
+
+(use-package projectile)
+(use-package flycheck)
+(use-package yasnippet :config (yas-global-mode))
+(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+  ;;:config (setq lsp-completion-enable-additional-text-edit nil)
+  )
+(use-package hydra)
+(use-package company)
+(use-package lsp-ui)
+(use-package which-key :config (which-key-mode))
+(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
+(use-package dap-java :ensure nil)
+(use-package helm-lsp)
+(use-package helm
+  :config (helm-mode))
+(use-package lsp-treemacs)
+;; customization
+(with-eval-after-load 'lsp-mode
+  ;; don't scan 3rd party javascript libraries
+  (push "[/\\\\][^/\\\\]*\\.\\(json\\|html\\|jade\\)$" lsp-file-watch-ignored) ; json
+  (push "/target/.*" lsp-file-watch-ignored) ; target
+  (push "/node/.*" lsp-file-watch-ignored) ; node
+  (push "/node_modules/.*" lsp-file-watch-ignored) ; node
+  (push ".*/vendors/.*" lsp-file-watch-ignored) ; node
+  (push ".*\\.min\\.js$" lsp-file-watch-ignored) ; node
+  (push ".*/main/webpack/.*" lsp-file-watch-ignored) ; node webpack
+  )
+;; (setq lsp-java-java-path "/usr/local/jdk1.8.0_202/bin/java")
+(setq lsp-java-java-path "/usr/bin/java")
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+						                       :path "/usr/local/jdk1.8.0_202" :default t)
+                                      (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+					])
+(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
+(setq lsp-java-autobuild-enabled nil)
+;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-i") 'dap-step-in)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-c") 'dap-continue)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-n") 'dap-next)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-q") 'dap-disconnect)))
+(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'helm-lsp-code-actions)))
+(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
+(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
+(dap-register-debug-template
+  "Java Attach"
+  (list :name "Java Attach"
+        :type "java"
+        :request "attach"
+        :hostName "localhost"
+        :projectName "jdt.ls-java-project"
+        :port 11550))
+;; lsp-java configuration end
+
+(use-package org-superstar)
+(use-package magit)
+(use-package helm-projectile)
+(projectile-mode +1)
+(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(load "~/.emacs.d/helm-cfg.el")
+(add-hook 'after-init-hook 'global-company-mode)
+
+(setq-default tab-width 4)
+(global-set-key [remap dabbrev-expand] 'hippie-expand)
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-c g") 'magit-file-dispatch)
+(global-set-key (kbd "C-o") 'helm-projectile)
+(global-set-key (kbd "C-j") 'avy-goto-word-1)
+(global-set-key (kbd "C-S-n") 'helm-projectile-ag)
+(global-set-key (kbd "C-S-s") 'helm-occur)
+(global-set-key (kbd "C-S-v") 'scroll-down-command)
+(global-set-key (kbd "<f5>") 'revert-buffer)
+(global-set-key (kbd "C-M-i") 'company-complete)
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jspf\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tag\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.xhtml\\'" . web-mode))
+(setq web-mode-engines-alist
+      '(("jsp"    . "\\.jspf\\'"))
+      )
+(add-hook 'web-mode-hook (lambda () (web-mode-toggle-current-element-highlight)))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-e") 'web-mode-element-end )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-a") 'web-mode-element-beginning )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-c e s") 'web-mode-element-select )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-c e a") 'web-mode-element-content-select )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-u") 'web-mode-element-parent )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-d") 'web-mode-element-child )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'web-mode-element-previous )))
+(add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'web-mode-element-next )))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+(show-paren-mode 1)
+(electric-pair-mode 1)
+(global-set-key (kbd "M-o") 'ace-window)
+
+(global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
+    (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
+    (global-set-key (kbd "S-C-<down>") 'shrink-window)
+    (global-set-key (kbd "S-C-<up>") 'enlarge-window)
+
+(desktop-save-mode 1)
+(setq shr-inhibit-images t)
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(setq org-todo-keywords
+            '((sequence "TODO" "DOING" "|" "DONE" "DELEGATED")))
+(setq org-log-done 'time)
+(setq org-todo-keyword-faces
+      '(("DOING" . "green")))
+
+(setq-default cursor-type 'bar)
+(require 'expand-region)
+(global-set-key (kbd "C-=") 'er/expand-region)
+
+(global-set-key (kbd "s-j j") 'dap-debug)
+(global-set-key (kbd "s-j l") 'dap-debug-last)
+(global-set-key (kbd "s-j h") 'dap-hydra)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "<C-return>") (kbd "C-e <return>"))
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+(add-hook 'java-mode-hook 'display-line-numbers-mode)
+(add-hook 'web-mode-hook 'display-line-numbers-mode)
+(add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
+(require 'org-superstar)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+
+(pdf-loader-install)
+
+;; Ask for y/n instead of yes/no
+(defalias 'yes-or-no-p 'y-or-n-p)
