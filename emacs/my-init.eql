@@ -15,7 +15,7 @@
    ["#1E1C31" "#FF8080" "#95FFA4" "#FFE9AA" "#91DDFF" "#C991E1" "#AAFFE4" "#CBE3E7"])
  '(ansi-term-color-vector
    [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#a1efe4" "#fcfcfa"])
- '(aw-scope (quote frame)) 
+ '(aw-scope (quote frame))  
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case nil)
  '(company-quickhelp-color-background "#4F4F4F")
