@@ -15,7 +15,7 @@
    ["#1E1C31" "#FF8080" "#95FFA4" "#FFE9AA" "#91DDFF" "#C991E1" "#AAFFE4" "#CBE3E7"])
  '(ansi-term-color-vector
    [unspecified "#2d2a2e" "#ff6188" "#a9dc76" "#ffd866" "#78dce8" "#ab9df2" "#a1efe4" "#fcfcfa"])
- '(aw-scope (quote frame))  
+ '(aw-scope (quote frame))
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case nil)
  '(company-quickhelp-color-background "#4F4F4F")
@@ -68,9 +68,6 @@
  '(objed-cursor-color "#FF8080")
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
- '(package-selected-packages
-   (quote
-    (doom-themes zenburn-theme spacemacs-theme atom-one-dark-theme org-superstar web-mode recursive-narrow pdf-tools monokai-theme js2-mode expand-region yasnippet which-key use-package treemacs-projectile magit lsp-ui helm-projectile helm-lsp helm-ag flycheck company)))
  '(pdf-view-midnight-colors (quote ("#655370" . "#fbf8ef")))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
@@ -135,9 +132,8 @@
    (package-initialize)
    (package-refresh-contents)
    (package-install 'use-package)
-   (setq use-package-always-ensure t)
    (require 'use-package)))
-
+(setq use-package-always-ensure t)
 (use-package projectile)
 (use-package flycheck)
 (use-package yasnippet :config (yas-global-mode))
@@ -172,13 +168,14 @@
 						                       :path "/usr/local/jdk1.8.0_202" :default t)
                                       (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
 					])
-(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
+(setq lsp-java-vmargs '("-Xmx2G" "-Xms100m"))
 (setq lsp-java-autobuild-enabled nil)
 ;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-i") 'dap-step-in)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-c") 'dap-continue)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-n") 'dap-next)))
+(add-hook 'java-mode-hook (lambda () (local-unset-key (kbd "M-n"))))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-q") 'dap-disconnect)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'helm-lsp-code-actions)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
@@ -196,6 +193,7 @@
 (use-package org-superstar)
 (use-package magit)
 (use-package helm-projectile)
+(use-package avy)
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (load "~/.emacs.d/helm-cfg.el")
@@ -208,12 +206,13 @@
 (global-set-key (kbd "C-o") 'helm-projectile)
 (global-set-key (kbd "C-j") 'avy-goto-word-1)
 (global-set-key (kbd "C-S-n") 'helm-projectile-ag)
+(global-set-key (kbd "C-S-i") 'helm-imenu)
 (global-set-key (kbd "C-S-s") 'helm-occur)
 (global-set-key (kbd "C-S-v") 'scroll-down-command)
 (global-set-key (kbd "<f5>") 'revert-buffer)
 (global-set-key (kbd "C-M-i") 'company-complete)
 
-(require 'web-mode)
+(use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
@@ -236,6 +235,8 @@
 (add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-d") 'web-mode-element-child )))
 (add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'web-mode-element-previous )))
 (add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'web-mode-element-next )))
+
+(use-package js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
 (show-paren-mode 1)
@@ -259,7 +260,8 @@
       '(("DOING" . "green")))
 
 (setq-default cursor-type 'bar)
-(require 'expand-region)
+(use-package expand-region)
+(use-package pdf-tools)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
 (global-set-key (kbd "s-j j") 'dap-debug)
@@ -273,7 +275,6 @@
 (add-hook 'java-mode-hook 'display-line-numbers-mode)
 (add-hook 'web-mode-hook 'display-line-numbers-mode)
 (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
-(require 'org-superstar)
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
 (pdf-loader-install)
