@@ -1,6 +1,6 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
-(cua-mode 1)
+;; (cua-mode 1)
 (global-set-key (kbd "C-x v") nil)
 
 (require 'package)
@@ -17,74 +17,38 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(ansi-color-names-vector
-   ["#1c1e1f" "#e74c3c" "#b6e63e" "#e2c770" "#268bd2" "#fb2874" "#66d9ef" "#d6d6d4"])
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case t)
  '(custom-enabled-themes '(doom-molokai))
  '(custom-safe-themes
-   '("b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
+   '("22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
  '(dap-java-default-debug-port 11550)
  '(dired-dwim-target t)
- '(doc-view-continuous t)
- '(doc-view-resolution 100)
  '(dumb-jump-ignore-context t)
  '(ediff-diff-options "-w")
  '(ediff-diff-program "diff")
  '(ediff-show-ancestor t)
  '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(ejc-candidates-uppercase t)
+ '(ejc-show-result-bottom t)
  '(eww-search-prefix "https://cn.bing.com/search?ensearch=1&q=")
- '(exwm-floating-border-color "#323435")
- '(fci-rule-color "#555556")
  '(global-tab-line-mode t)
  '(helm-completion-style 'helm)
- '(highlight-tail-colors
-   ((("#2b3222" "#b6e63e" "green")
-     . 0)
-    (("#233033" "#66d9ef" "brightcyan")
-     . 20)))
  '(indent-tabs-mode nil)
- '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#fd971f"))
- '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#b6e63e"))
- '(jdee-db-spec-breakpoint-face-colors (cons "#1B2229" "#525254"))
  '(lsp-file-watch-threshold 40000)
  '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-ui-sideline-show-code-actions nil)
  '(magit-diff-use-overlays nil)
- '(objed-cursor-color "#e74c3c")
+ '(make-backup-files nil)
+ '(nrepl-sync-request-timeout 60)
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
  '(package-selected-packages
-   '(lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm-projectile helm hydra projectile lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar magit js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
- '(pdf-view-midnight-colors (cons "#d6d6d4" "#1c1e1f"))
+   '(gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm-projectile helm hydra projectile lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar magit js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
  '(require-final-newline nil)
- '(rustic-ansi-faces
-   ["#1c1e1f" "#e74c3c" "#b6e63e" "#e2c770" "#268bd2" "#fb2874" "#66d9ef" "#d6d6d4"])
  '(shr-inhibit-images t t)
  '(url-proxy-services '(("https" . "192.168.100.29:16823")))
- '(vc-annotate-background "#1c1e1f")
- '(vc-annotate-color-map
-   (list
-    (cons 20 "#b6e63e")
-    (cons 40 "#c4db4e")
-    (cons 60 "#d3d15f")
-    (cons 80 "#e2c770")
-    (cons 100 "#ebb755")
-    (cons 120 "#f3a73a")
-    (cons 140 "#fd971f")
-    (cons 160 "#fc723b")
-    (cons 180 "#fb4d57")
-    (cons 200 "#fb2874")
-    (cons 220 "#f43461")
-    (cons 240 "#ed404e")
-    (cons 260 "#e74c3c")
-    (cons 280 "#c14d41")
-    (cons 300 "#9c4f48")
-    (cons 320 "#77504e")
-    (cons 340 "#555556")
-    (cons 360 "#555556")))
- '(vc-annotate-very-old-color nil)
  '(web-mode-code-indent-offset 4)
  '(web-mode-enable-auto-expanding t)
  '(web-mode-enable-auto-indentation nil)
@@ -161,14 +125,14 @@
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'lsp-execute-code-action)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
-;; (dap-register-debug-template
-;;   "Java Attach"
-;;   (list :name "Java Attach"
-;;         :type "java"
-;;         :request "attach"
-;;         :hostName "localhost"
-;;         :projectName "jdt.ls-java-project"
-;;         :port 11550))
+(dap-register-debug-template
+  "Java Attach"
+  (list :name "Java Attach"
+        :type "java"
+        :request "attach"
+        :hostName "localhost"
+        :projectName "jdt.ls-java-project"
+        :port 11550))
 ;; lsp-java configuration end
 (use-package markdown-mode
   :ensure t
@@ -288,6 +252,73 @@
 (add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
 (add-hook 'lua-mode-hook #'lsp-deferred)
 (pdf-loader-install)
+
+(use-package ejc-sql)
+(setq clomacs-httpd-default-port 8090)
+(require 'ejc-company)
+(push 'ejc-company-backend company-backends)
+(add-hook 'ejc-sql-minor-mode-hook
+          (lambda ()
+            (company-mode t)))
+(setq ejc-completion-system 'standard)
+(add-hook 'ejc-sql-minor-mode-hook
+          (lambda ()
+            (ejc-eldoc-setup)))
+(add-hook 'ejc-sql-connected-hook
+          (lambda ()
+            (ejc-set-fetch-size 50)
+            (ejc-set-max-rows 50)
+            (ejc-set-show-too-many-rows-message t)
+            (ejc-set-column-width-limit 34)
+            (ejc-set-use-unicode t)))
+(add-hook 'ejc-sql-minor-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'ejc-show-next-result )))
+(add-hook 'ejc-sql-minor-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'ejc-show-prev-result )))
+(add-hook 'ejc-sql-minor-mode-hook (lambda () (local-set-key (kbd "C-q") 'ejc-quit-connection )))
+(add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'ejc-show-next-result )))
+(add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'ejc-show-prev-result )))
+(ejc-create-connection
+ "chengdu"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "ladodgers"
+ :user "etix_mig"
+ :port "1521"
+ :host "192.168.100.1"
+ :dbname "chn"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db1"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "ladodgers"
+ :user "etix_dml"
+ :port "1521"
+ :host "10.10.1.100"
+ :dbname "AWS_TEST_1"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db2"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "ladodgers"
+ :user "etix_dml"
+ :port "1521"
+ :host "10.10.1.101"
+ :dbname "AWS_TEST_2"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db3"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "ladodgers"
+ :user "etix_dml"
+ :port "1521"
+ :host "10.10.1.103"
+ :dbname "AWS_TEST_3"
+ :dbtype "oracle:sid"
+ :separator ";")
 
 ;; Ask for y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
