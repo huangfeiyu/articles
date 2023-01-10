@@ -2,14 +2,13 @@
 (menu-bar-mode -1)
 ;; (cua-mode 1)
 (global-set-key (kbd "C-x v") nil)
-
+;; (setq debug-on-message ".*Error in post-command-hook.*")
 (require 'package)
 (setq package-archives '(
-                         ;; ("gnu"   . "https://mirrors.sjtug.sjtu.edu.cn/emacs-elpa/gnu/")
-                         ;; ("melpa" . "https://mirrors.sjtug.sjtu.edu.cn/emacs-elpa/melpa/")
-                         ;;("melpa-stable" . "http://elpa.emacs-china.org/melpa-stable/")
-                         ("gnu" . "http://elpa.emacs-china.org/gnu/")
-                         ("melpa" . "http://elpa.emacs-china.org/melpa/")
+                         ("gnu"   . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ;; ("gnu" . "http://elpa.emacs-china.org/gnu/")
+                         ;; ("melpa" . "http://elpa.emacs-china.org/melpa/")
                          ))
 (package-initialize)
 (custom-set-variables
@@ -19,9 +18,10 @@
  ;; If there is more than one, they won't work right.
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case t)
+ '(company-minimum-prefix-length 3)
  '(custom-enabled-themes '(doom-molokai))
  '(custom-safe-themes
-   '("22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
+   '("be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
  '(dap-java-default-debug-port 11550)
  '(dired-dwim-target t)
  '(dumb-jump-ignore-context t)
@@ -37,7 +37,6 @@
  '(helm-completion-style 'helm)
  '(indent-tabs-mode nil)
  '(lsp-file-watch-threshold 40000)
- '(lsp-headerline-breadcrumb-enable nil)
  '(lsp-ui-sideline-show-code-actions nil)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
@@ -45,10 +44,10 @@
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
  '(package-selected-packages
-   '(gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm-projectile helm hydra projectile lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar magit js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(magit helm-lsp dap-mode helm-flx gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm-projectile helm hydra projectile lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
  '(require-final-newline nil)
- '(shr-inhibit-images t t)
- '(url-proxy-services '(("https" . "192.168.100.29:16823")))
+ '(shr-inhibit-images t)
+ '(url-proxy-services '(("https" . "192.168.100.39:16823")))
  '(web-mode-code-indent-offset 4)
  '(web-mode-enable-auto-expanding t)
  '(web-mode-enable-auto-indentation nil)
@@ -59,16 +58,20 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
+;; load notes
+;; (let ((filename "~/.notes.org"))
+;;   (when (file-exists-p filename)
+;;     (setq initial-buffer-choice filename)))
 ;; lsp-java configuration start
 ;; (setenv "JAVA_HOME"  "/usr/local/jdk1.8.0_202")
+(setenv "MAVEN_HOME"  "/usr/share/maven")
 (setenv "LSP_USE_PLISTS"  "true")
 (condition-case nil
     (require 'use-package)
   (file-error
    (require 'package)
-   ;; (add-to-list 'package-archives '("melpa" . "https://mirrors.sjtug.sjtu.edu.cn/emacs-elpa/melpa/"))
-   (add-to-list 'package-archives '("melpa" . "http://elpa.emacs-china.org/melpa/"))
+   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+   ;; (add-to-list 'package-archives '("melpa" . "http://elpa.emacs-china.org/melpa/"))
    (package-initialize)
    (package-refresh-contents)
    (package-install 'use-package)
@@ -78,7 +81,6 @@
 (use-package flycheck)
 (use-package yasnippet :config (yas-global-mode))
 (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
-  ;;:config (setq lsp-completion-enable-additional-text-edit nil)
   )
 (use-package hydra)
 (use-package company)
@@ -87,6 +89,7 @@
 (use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
+(use-package helm-lsp)
 (use-package helm
   :config (helm-mode))
 (use-package helm-projectile)
@@ -113,8 +116,9 @@
 (setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
 (setq lsp-java-autobuild-enabled nil)
 (setq gc-cons-threshold 200000000)
-(setq read-process-output-max (* 3072 1024)) ;; 3mb
+(setq read-process-output-max (* 3072 2048)) ;; 3mb
 (setq lsp-idle-delay 0.500)
+(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
 ;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-i") 'dap-step-in)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
@@ -125,6 +129,7 @@
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'lsp-execute-code-action)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
+(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
 (dap-register-debug-template
   "Java Attach"
   (list :name "Java Attach"
@@ -139,8 +144,9 @@
   :mode ("README\\.md\\'" . gfm-mode)
   :init (setq markdown-command "multimarkdown"))
 (use-package org-superstar)
-(use-package magit)
 (use-package avy)
+(use-package helm-flx)
+(helm-flx-mode +1)
 (projectile-mode +1)
 (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -266,8 +272,8 @@
             (ejc-eldoc-setup)))
 (add-hook 'ejc-sql-connected-hook
           (lambda ()
-            (ejc-set-fetch-size 50)
-            (ejc-set-max-rows 50)
+            (ejc-set-fetch-size 200)
+            (ejc-set-max-rows 200)
             (ejc-set-show-too-many-rows-message t)
             (ejc-set-column-width-limit 34)
             (ejc-set-use-unicode t)))
@@ -299,6 +305,17 @@
  :separator ";")
 
 (ejc-create-connection
+ "aws-db1-kk"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "ladodgers"
+ :user "kk_app"
+ :port "1521"
+ :host "10.10.1.100"
+ :dbname "AWS_TEST_1"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
  "aws-db2"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
  :password "ladodgers"
@@ -319,6 +336,10 @@
  :dbname "AWS_TEST_3"
  :dbtype "oracle:sid"
  :separator ";")
+
+(setq lsp-sqls-workspace-config-path nil)
+(setq lsp-sqls-connections
+    '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
 
 ;; Ask for y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
