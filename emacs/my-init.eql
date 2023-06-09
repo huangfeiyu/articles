@@ -1,7 +1,40 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 ;; (cua-mode 1)
-(global-set-key (kbd "C-x v") nil)
+;; (global-set-key (kbd "C-x v") nil)
+(global-set-key (kbd "C-x C-s") nil)
+;; (global-set-key (kbd "C-n") nil)
+(global-set-key (kbd "C-S-p") 'save-buffer)
+;; (global-set-key (kbd "C-p") nil)
+(global-set-key (kbd "C-s") nil)
+(global-set-key (kbd "C-S-R") 'isearch-forward)
+(define-key isearch-mode-map (kbd "C-S-R") 'isearch-repeat-forward)
+
+(defun new-blank-line()
+  (interactive)
+  "Create a new empty line in the next line."
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun project-kill-other-buffers (&optional no-confirm)
+  (interactive)
+  (let* ((pr (project-current t))
+         (bufs1 (project--buffers-to-kill pr))
+         (bufs (remove (current-buffer) bufs1)))
+    (cond (no-confirm
+           (mapc #'kill-buffer bufs))
+          ((null bufs)
+           (message "No buffers to kill"))
+          ((yes-or-no-p (format "Kill %d buffers in %s? "
+                                (length bufs)
+                                (project-root pr)))
+           (mapc #'kill-buffer bufs)))))
+(global-set-key (kbd "C-x p k") 'project-kill-other-buffers)
+(add-hook 'ediff-mode-hook (lambda () (disable-theme 'doom-molokai)))
+(add-hook 'ediff-quit-session-group-hook (lambda () (enable-theme 'doom-molokai)))
+
+(global-set-key (kbd "<C-return>") 'new-blank-line)
+(global-set-key (kbd "<S-return>") 'eval-last-sexp)
 ;; (setq debug-on-message ".*Error in post-command-hook.*")
 (require 'package)
 (setq package-archives '(
@@ -19,9 +52,10 @@
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case t)
  '(company-minimum-prefix-length 3)
- '(custom-enabled-themes '(doom-molokai))
+ '(create-lockfiles nil)
+ '(custom-enabled-themes '(doom-dracula))
  '(custom-safe-themes
-   '("be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
+   '("944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
  '(dap-java-default-debug-port 11550)
  '(dired-dwim-target t)
  '(dumb-jump-ignore-context t)
@@ -33,10 +67,12 @@
  '(ejc-candidates-uppercase t)
  '(ejc-show-result-bottom t)
  '(eww-search-prefix "https://cn.bing.com/search?ensearch=1&q=")
+ '(fill-column 200)
  '(global-tab-line-mode t)
  '(helm-completion-style 'helm)
  '(indent-tabs-mode nil)
  '(lsp-file-watch-threshold 40000)
+ '(lsp-log-io nil)
  '(lsp-ui-sideline-show-code-actions nil)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
@@ -44,9 +80,10 @@
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
  '(package-selected-packages
-   '(magit helm-lsp dap-mode helm-flx gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm-projectile helm hydra projectile lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(eglot docker-tramp project eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
  '(require-final-newline nil)
- '(shr-inhibit-images t)
+ '(scroll-preserve-screen-position nil)
+ '(shr-inhibit-images t t)
  '(url-proxy-services '(("https" . "192.168.100.39:16823")))
  '(web-mode-code-indent-offset 4)
  '(web-mode-enable-auto-expanding t)
@@ -77,7 +114,7 @@
    (package-install 'use-package)
    (require 'use-package)))
 (setq use-package-always-ensure t)
-(use-package projectile)
+;; (use-package projectile)
 (use-package flycheck)
 (use-package yasnippet :config (yas-global-mode))
 (use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
@@ -86,15 +123,18 @@
 (use-package company)
 (use-package lsp-ui)
 (use-package which-key :config (which-key-mode))
-(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+;; (use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(use-package lsp-java)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
 (use-package helm-lsp)
 (use-package helm
   :config (helm-mode))
-(use-package helm-projectile)
+;; (use-package helm-projectile)
 (use-package helm-ag)
 (use-package lsp-treemacs)
+(use-package helm-xref)
+
 ;; customization
 (with-eval-after-load 'lsp-mode
   ;; don't scan 3rd party javascript libraries
@@ -108,13 +148,13 @@
   )
 ;; (setq lsp-java-java-path "/usr/local/jdk1.8.0_202/bin/java")
 (setq lsp-java-java-path "/usr/bin/java")
-(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
-						                       :path "/usr/local/jdk1.8.0_202" :default t)
-                                      (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8" :path "/usr/local/jdk1.8.0_202" :default t)
+                                        (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+                                        (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")
 					])
 ;; current VSCode defaults
-(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m"))
-(setq lsp-java-autobuild-enabled nil)
+(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
+;; (setq lsp-java-autobuild-enabled nil)
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max (* 3072 2048)) ;; 3mb
 (setq lsp-idle-delay 0.500)
@@ -130,6 +170,7 @@
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
+(add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "<f6>") 'dap-tooltip-at-point)))
 (dap-register-debug-template
   "Java Attach"
   (list :name "Java Attach"
@@ -145,19 +186,22 @@
   :init (setq markdown-command "multimarkdown"))
 (use-package org-superstar)
 (use-package avy)
-(use-package helm-flx)
-(helm-flx-mode +1)
-(projectile-mode +1)
-(define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+(use-package docker-tramp)
+(setq tramp-default-method "ssh")
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+;; (projectile-mode +1)
+;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
 (add-hook 'after-init-hook 'global-company-mode)
 
 (setq-default tab-width 4)
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-c g") 'magit-file-dispatch)
-(global-set-key (kbd "C-o") 'helm-projectile)
+;; (global-set-key (kbd "C-o") 'helm-projectile)
+(global-set-key (kbd "C-o") 'project-find-file)
 (global-set-key (kbd "C-j") 'avy-goto-word-1)
-(global-set-key (kbd "C-S-n") 'helm-projectile-ag)
+;; (global-set-key (kbd "C-S-n") 'helm-projectile-ag)
+(global-set-key (kbd "C-S-n") 'helm-do-ag-project-root)
 (global-set-key (kbd "C-S-i") 'helm-imenu)
 (global-set-key (kbd "C-S-s") 'helm-occur)
 (global-set-key (kbd "C-S-v") 'scroll-down-command)
@@ -258,7 +302,16 @@
 (add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
 (add-hook 'lua-mode-hook #'lsp-deferred)
 (pdf-loader-install)
-
+(defun helm-do-grep-ag-root (arg)
+  "Preconfigured `helm' for grepping with AG in `project-root'.
+With prefix arg prompt for type if available with your AG
+version."
+  (interactive "P")
+  ;; (require 'helm-files)
+  (helm-grep-ag-1
+   (expand-file-name
+    (project-root
+     (project-current t))) arg))
 (use-package ejc-sql)
 (setq clomacs-httpd-default-port 8090)
 (require 'ejc-company)
@@ -285,7 +338,7 @@
 (ejc-create-connection
  "chengdu"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
+ :password ""
  :user "etix_mig"
  :port "1521"
  :host "192.168.100.1"
@@ -296,7 +349,7 @@
 (ejc-create-connection
  "aws-db1"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
+ :password ""
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.100"
@@ -307,7 +360,7 @@
 (ejc-create-connection
  "aws-db1-kk"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
+ :password ""
  :user "kk_app"
  :port "1521"
  :host "10.10.1.100"
@@ -318,7 +371,7 @@
 (ejc-create-connection
  "aws-db2"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
+ :password ""
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.101"
@@ -329,7 +382,7 @@
 (ejc-create-connection
  "aws-db3"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
+ :password ""
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.103"
@@ -339,7 +392,42 @@
 
 (setq lsp-sqls-workspace-config-path nil)
 (setq lsp-sqls-connections
-    '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
+      '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               `(java-mode . ("/home/huang/jdtls/jdt-language-server-1.24.0-202306011728/bin/jdtls" :initializationOptions
+                              (:settings
+                               (:java
+                                (:configuration
+                                 (:runtime [(:name "JavaSE-1.8" :path "/usr/local/jdk-8" :default t)
+                                            (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64" :default t)])
+                                 ;; :format (:settings (:url ,(expand-file-name (locate-user-emacs-file "cache/eclipse-java-google-style.xml"))
+                                 ;; :profile "GoogleStyle"))
+                                 ;; NOTE: https://github.com/redhat-developer/vscode-java/issues/406#issuecomment-356303715
+                                 ;; > We enabled it by default so that workspace-wide errors can be reported (eg. removing a public method in one class would cause compilation errors in other files consuming that method).
+                                 ;; for large workspaces, it may make sense to be able to disable autobuild if it negatively impacts performance.
+                                 :autobuild (:enabled t)
+                                 ;; https://github.com/dgileadi/vscode-java-decompiler
+                                 :contentProvider (:preferred "fernflower")))
+                               ;; WIP: support non standard LSP `java/classFileContents', `Location' items that have a `jdt://...' uri
+                               ;; https://github.com/eclipse/eclipse.jdt.ls/issues/1384
+                               ;; nvim impl demo: https://github.com/mfussenegger/dotfiles/commit/3cddf73cd43120da2655e2df6d79bdfd06697f0e
+                               ;; lsp-java impl demo: https://github.com/emacs-lsp/lsp-java/blob/master/lsp-java.el
+                               :extendedClientCapabilities (:classFileContentsSupport t)
+                               ;; bundles: decompilers, etc.
+                               ;; https://github.com/dgileadi/dg.jdt.ls.decompiler
+                               ;; :bundles ,(let ((bundles-dir (expand-file-name (locate-user-emacs-file "cache/language-server/java/bundles" user-emacs-directory)))
+                               ;;                 jdtls-bundles)
+                               ;;             (->> (when (file-directory-p bundles-dir)
+                               ;;                    (directory-files bundles-dir t "\\.jar$"))
+                               ;;                  (append jdtls-bundles)
+                               ;;                  (apply #'vector)))
+                               )
+                              ))))
 
 ;; Ask for y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
+(put 'narrow-to-region 'disabled nil)
+(put 'scroll-left 'disabled nil)
