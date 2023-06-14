@@ -1,0 +1,22 @@
+The following setup works for me. I use java 8 for my project, and java 17 to run the jdtls.
+#+begin_src lisp
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               `(java-mode . ("/home/huang/jdtls/jdt-language-server-1.24.0-202306011728/bin/jdtls" :initializationOptions
+                              (:settings
+                               (:java
+                                (:configuration
+                                 (:runtime [(:name "JavaSE-1.8" :path "/usr/local/jdk-8" :default t)
+                                            ;;(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64" :default t)])
+                                 :autobuild (:enabled t)
+                                 :contentProvider (:preferred "fernflower")))
+                               :extendedClientCapabilities (:classFileContentsSupport t)
+                               )
+                              )))
+  (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
+  (define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
+  (define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
+  (add-hook 'eglot-mode-hook 'company-mode)
+  )
+#+end_src
