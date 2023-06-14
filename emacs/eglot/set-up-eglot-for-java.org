@@ -8,7 +8,7 @@ The following setup works for me. I use java 8 for my project, and java 17 to ru
                                 (:configuration
                                  (:runtime [(:name "JavaSE-1.8" :path "/usr/local/jdk-8" :default t)
                                             ;;(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
-                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64" :default t)])
+                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
                                  :autobuild (:enabled t)
                                  :contentProvider (:preferred "fernflower")))
                                :extendedClientCapabilities (:classFileContentsSupport t)
