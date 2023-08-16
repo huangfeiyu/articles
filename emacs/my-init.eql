@@ -73,6 +73,7 @@
  '(indent-tabs-mode nil)
  '(lsp-file-watch-threshold 40000)
  '(lsp-log-io nil)
+ ;; '(lsp-semantic-tokens-enable t)
  '(lsp-ui-sideline-show-code-actions nil)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
@@ -80,10 +81,10 @@
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
  '(package-selected-packages
-   '(eglot docker-tramp project eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode use-package spacemacs-theme pdf-tools org-superstar js2-mode flycheck flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov crux ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar js2-mode flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
  '(require-final-newline nil)
  '(scroll-preserve-screen-position nil)
- '(shr-inhibit-images t t)
+ '(shr-inhibit-images t)
  '(url-proxy-services '(("https" . "192.168.100.39:16823")))
  '(web-mode-code-indent-offset 4)
  '(web-mode-enable-auto-expanding t)
@@ -103,16 +104,7 @@
 ;; (setenv "JAVA_HOME"  "/usr/local/jdk1.8.0_202")
 (setenv "MAVEN_HOME"  "/usr/share/maven")
 (setenv "LSP_USE_PLISTS"  "true")
-(condition-case nil
-    (require 'use-package)
-  (file-error
-   (require 'package)
-   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-   ;; (add-to-list 'package-archives '("melpa" . "http://elpa.emacs-china.org/melpa/"))
-   (package-initialize)
-   (package-refresh-contents)
-   (package-install 'use-package)
-   (require 'use-package)))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (setq use-package-always-ensure t)
 ;; (use-package projectile)
 (use-package flycheck)
@@ -123,8 +115,8 @@
 (use-package company)
 (use-package lsp-ui)
 (use-package which-key :config (which-key-mode))
-;; (use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
-(use-package lsp-java)
+(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+;; (use-package lsp-java)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
 (use-package helm-lsp)
@@ -186,7 +178,6 @@
   :init (setq markdown-command "multimarkdown"))
 (use-package org-superstar)
 (use-package avy)
-(use-package docker-tramp)
 (setq tramp-default-method "ssh")
 (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 ;; (projectile-mode +1)
@@ -312,6 +303,9 @@ version."
    (expand-file-name
     (project-root
      (project-current t))) arg))
+;; (use-package treesit-auto
+;;   :config
+;;   (global-treesit-auto-mode))
 (use-package ejc-sql)
 (setq clomacs-httpd-default-port 8090)
 (require 'ejc-company)
@@ -338,7 +332,7 @@ version."
 (ejc-create-connection
  "chengdu"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password ""
+ :password "ladodgers"
  :user "etix_mig"
  :port "1521"
  :host "192.168.100.1"
@@ -349,7 +343,7 @@ version."
 (ejc-create-connection
  "aws-db1"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password ""
+ :password "ladodgers"
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.100"
@@ -360,7 +354,7 @@ version."
 (ejc-create-connection
  "aws-db1-kk"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password ""
+ :password "ladodgers"
  :user "kk_app"
  :port "1521"
  :host "10.10.1.100"
@@ -371,7 +365,7 @@ version."
 (ejc-create-connection
  "aws-db2"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password ""
+ :password "ladodgers"
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.101"
@@ -382,7 +376,7 @@ version."
 (ejc-create-connection
  "aws-db3"
  :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password ""
+ :password "ladodgers"
  :user "etix_dml"
  :port "1521"
  :host "10.10.1.103"
@@ -402,7 +396,7 @@ version."
                                 (:configuration
                                  (:runtime [(:name "JavaSE-1.8" :path "/usr/local/jdk-8" :default t)
                                             (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
-                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64" :default t)])
+                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
                                  ;; :format (:settings (:url ,(expand-file-name (locate-user-emacs-file "cache/eclipse-java-google-style.xml"))
                                  ;; :profile "GoogleStyle"))
                                  ;; NOTE: https://github.com/redhat-developer/vscode-java/issues/406#issuecomment-356303715
@@ -425,7 +419,12 @@ version."
                                ;;                  (append jdtls-bundles)
                                ;;                  (apply #'vector)))
                                )
-                              ))))
+                              )))
+  (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
+(define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
+(define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
+(add-hook 'eglot-mode-hook 'company-mode)
+  )
 
 ;; Ask for y/n instead of yes/no
 (defalias 'yes-or-no-p 'y-or-n-p)
