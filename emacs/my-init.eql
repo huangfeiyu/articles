@@ -436,7 +436,7 @@ version."
 (setq message-send-mail-function 'ignore)
 (setq rmail-enable nil)
 (setq gnus-select-method
-      '(nnimap "Etix Email"
+      '(nnimap "etixmail"
         (nnimap-address "imap.gmail.com")
         (nnimap-server-port 993)
         (nnimap-stream ssl)
