@@ -9,6 +9,7 @@
 (global-set-key (kbd "C-s") nil)
 (global-set-key (kbd "C-S-R") 'isearch-forward)
 (define-key isearch-mode-map (kbd "C-S-R") 'isearch-repeat-forward)
+(global-set-key [home] 'back-to-indentation)
 
 (defun new-blank-line()
   (interactive)
@@ -62,6 +63,7 @@ Doesn't mess with special buffers."
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case t)
  '(company-minimum-prefix-length 3)
+ '(context-menu-mode t)
  '(create-lockfiles nil)
  '(custom-enabled-themes '(doom-dracula))
  '(custom-safe-themes
@@ -77,6 +79,7 @@ Doesn't mess with special buffers."
  '(ejc-candidates-uppercase t)
  '(ejc-show-result-bottom t)
  '(eww-search-prefix "https://cn.bing.com/search?ensearch=1&q=")
+ '(fido-vertical-mode t)
  '(fill-column 200)
  '(global-tab-line-mode t)
  '(helm-completion-style 'helm)
@@ -89,8 +92,10 @@ Doesn't mess with special buffers."
  '(nrepl-sync-request-timeout 60)
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
+ '(org-table-convert-region-max-lines 9999999)
  '(package-selected-packages
-   '(vdiff-magit rg flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump typescript-mode zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar js2-mode flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(vdiff-magit rg flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+ '(read-buffer-completion-ignore-case t)
  '(require-final-newline nil)
  '(scroll-preserve-screen-position nil)
  '(shr-inhibit-images t)
@@ -110,7 +115,6 @@ Doesn't mess with special buffers."
 ;;   (when (file-exists-p filename)
 ;;     (setq initial-buffer-choice filename)))
 ;; lsp-java configuration start
-;; (setenv "JAVA_HOME"  "/usr/local/jdk1.8.0_202")
 (setenv "MAVEN_HOME"  "/usr/share/maven")
 (setenv "LSP_USE_PLISTS"  "true")
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -128,13 +132,7 @@ Doesn't mess with special buffers."
 ;; (use-package lsp-java)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
-(use-package helm-lsp)
-(use-package helm
-  :config (helm-mode))
-;; (use-package helm-projectile)
-(use-package helm-ag)
 (use-package lsp-treemacs)
-(use-package helm-xref)
 
 ;; customization
 (with-eval-after-load 'lsp-mode
@@ -147,19 +145,16 @@ Doesn't mess with special buffers."
   (push ".*\\.min\\.js$" lsp-file-watch-ignored) ; node
   (push ".*/main/webpack/.*" lsp-file-watch-ignored) ; node webpack
   )
-;; (setq lsp-java-java-path "/usr/local/jdk1.8.0_202/bin/java")
 (setq lsp-java-java-path "/usr/bin/java")
-(setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8" :path "/usr/local/jdk1.8.0_202" :default t)
-                                        (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64" :default t)
                                         (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")
 					])
 ;; current VSCode defaults
-(setq lsp-java-vmargs '("-XX:+UseParallelGC" "-XX:GCTimeRatio=4" "-XX:AdaptiveSizePolicyWeight=90" "-Dsun.zip.disableMemoryMapping=true" "-Xmx2G" "-Xms100m" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
-;; (setq lsp-java-autobuild-enabled nil)
+(setq lsp-java-vmargs '("-Xmx2560m" "-Xms100m" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
+(setq lsp-java-autobuild-enabled nil)
 (setq gc-cons-threshold 200000000)
 (setq read-process-output-max (* 3072 2048)) ;; 3mb
 (setq lsp-idle-delay 0.500)
-(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
 ;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-i") 'dap-step-in)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
@@ -170,7 +165,6 @@ Doesn't mess with special buffers."
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'lsp-execute-code-action)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
 (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
-(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "<f6>") 'dap-tooltip-at-point)))
 (dap-register-debug-template
   "Java Attach"
@@ -187,27 +181,20 @@ Doesn't mess with special buffers."
   :init (setq markdown-command "multimarkdown"))
 (use-package org-superstar)
 (use-package avy)
-(setq tramp-default-method "ssh")
-(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-;; (projectile-mode +1)
-;; (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+;; (setq tramp-default-method "ssh")
+;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 (add-hook 'after-init-hook 'global-company-mode)
 
 (setq-default tab-width 4)
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-c g") 'magit-file-dispatch)
-;; (global-set-key (kbd "C-o") 'helm-projectile)
 (global-set-key (kbd "C-o") 'project-find-file)
 (global-set-key (kbd "C-j") 'avy-goto-word-1)
-;; (global-set-key (kbd "C-S-n") 'helm-projectile-ag)
-(global-set-key (kbd "C-S-n") 'helm-do-ag-project-root)
-(global-set-key (kbd "C-S-i") 'helm-imenu)
-(global-set-key (kbd "C-S-s") 'helm-occur)
 (global-set-key (kbd "C-S-v") 'scroll-down-command)
 (global-set-key (kbd "C-S-c") 'scroll-up-command)
 (global-set-key (kbd "<f5>") 'revert-buffer)
-(global-set-key (kbd "C-M-i") 'company-complete)
+;; (global-set-key (kbd "C-M-i") 'company-complete)
 
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
@@ -233,12 +220,8 @@ Doesn't mess with special buffers."
 (add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'web-mode-element-previous )))
 (add-hook 'web-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'web-mode-element-next )))
 
-(use-package js2-mode)
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-
 (show-paren-mode 1)
 (electric-pair-mode 1)
-(global-set-key (kbd "M-o") 'ace-window)
 
 (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
     (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
@@ -267,7 +250,6 @@ Doesn't mess with special buffers."
 (use-package expand-region)
 (use-package pdf-tools)
 (use-package doom-themes)
-(use-package typescript-mode)
 (use-package lua-mode)
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
@@ -277,10 +259,7 @@ Doesn't mess with special buffers."
 (global-set-key (kbd "s-j l") 'dap-debug-last)
 (global-set-key (kbd "s-j h") 'dap-hydra)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "M-x") 'helm-M-x)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
@@ -292,24 +271,15 @@ Doesn't mess with special buffers."
 (add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "C-M-=") 'lua-goto-matching-block)))
 (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-(add-hook 'js2-mode-hook #'lsp-deferred)
-(add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
-(add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
+(add-hook 'js-ts-mode-hook #'lsp-deferred)
+(add-hook 'js-ts-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
+(add-hook 'js-ts-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
 (add-hook 'typescript-mode-hook #'lsp-deferred)
 (add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
 (add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
 (add-hook 'lua-mode-hook #'lsp-deferred)
 (pdf-loader-install)
-(defun helm-do-grep-ag-root (arg)
-  "Preconfigured `helm' for grepping with AG in `project-root'.
-With prefix arg prompt for type if available with your AG
-version."
-  (interactive "P")
-  ;; (require 'helm-files)
-  (helm-grep-ag-1
-   (expand-file-name
-    (project-root
-     (project-current t))) arg))
+
 ;; (use-package treesit-auto
 ;;   :config
 ;;   (global-treesit-auto-mode))
@@ -336,73 +306,16 @@ version."
 (add-hook 'ejc-sql-minor-mode-hook (lambda () (local-set-key (kbd "C-q") 'ejc-quit-connection )))
 (add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'ejc-show-next-result )))
 (add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'ejc-show-prev-result )))
-(ejc-create-connection
- "chengdu"
- :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
- :user "etix_mig"
- :port "1521"
- :host "192.168.100.1"
- :dbname "chn"
- :dbtype "oracle:sid"
- :separator ";")
-
-(ejc-create-connection
- "aws-db1"
- :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
- :user "etix_dml"
- :port "1521"
- :host "10.10.1.100"
- :dbname "AWS_TEST_1"
- :dbtype "oracle:sid"
- :separator ";")
-
-(ejc-create-connection
- "aws-db1-kk"
- :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
- :user "kk_app"
- :port "1521"
- :host "10.10.1.100"
- :dbname "AWS_TEST_1"
- :dbtype "oracle:sid"
- :separator ";")
-
-(ejc-create-connection
- "aws-db2"
- :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
- :user "etix_dml"
- :port "1521"
- :host "10.10.1.101"
- :dbname "AWS_TEST_2"
- :dbtype "oracle:sid"
- :separator ";")
-
-(ejc-create-connection
- "aws-db3"
- :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
- :password "ladodgers"
- :user "etix_dml"
- :port "1521"
- :host "10.10.1.103"
- :dbname "AWS_TEST_3"
- :dbtype "oracle:sid"
- :separator ";")
 
 (setq lsp-sqls-workspace-config-path nil)
-(setq lsp-sqls-connections
-      '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               `(java-mode . ("/home/huang/jdtls/jdt-language-server-1.24.0-202306011728/bin/jdtls" :initializationOptions
+               `(java-ts-mode . ("/home/huang/jdtls/jdt-language-server-1.24.0-202306011728/bin/jdtls" :initializationOptions
                               (:settings
                                (:java
                                 (:configuration
-                                 (:runtime [(:name "JavaSE-1.8" :path "/usr/local/jdk-8" :default t)
-                                            (:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64")
+                                 (:runtime [(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64" :default t)
                                             (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
                                  ;; :format (:settings (:url ,(expand-file-name (locate-user-emacs-file "cache/eclipse-java-google-style.xml"))
                                  ;; :profile "GoogleStyle"))
@@ -450,7 +363,28 @@ version."
 (setq smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg"))
 (setq smtpmail-debug-info t)
 (setq smtpmail-debug-verb t)
-
+(use-package helm)
+(use-package helm-lsp)
+(use-package helm-ag)
+(use-package helm-xref)
+(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
+(global-set-key (kbd "C-S-n") 'helm-do-ag-project-root)
+(global-set-key (kbd "C-S-i") 'helm-imenu)
+(global-set-key (kbd "C-S-s") 'helm-occur)
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
+;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
+;; (global-set-key (kbd "M-x") 'helm-M-x)
+(defun helm-do-grep-ag-root (arg)
+  "Preconfigured `helm' for grepping with AG in `project-root'.
+With prefix arg prompt for type if available with your AG
+version."
+  (interactive "P")
+  ;; (require 'helm-files)
+  (helm-grep-ag-1
+   (expand-file-name
+    (project-root
+     (project-current t))) arg))
 (defalias 'yes-or-no-p 'y-or-n-p)
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
