@@ -6,7 +6,6 @@
 ;; (global-set-key (kbd "C-n") nil)
 (global-set-key (kbd "C-S-p") 'save-buffer)
 ;; (global-set-key (kbd "C-p") nil)
-(global-set-key (kbd "C-s") nil)
 (global-set-key (kbd "C-S-R") 'isearch-forward)
 (define-key isearch-mode-map (kbd "C-S-R") 'isearch-repeat-forward)
 (global-set-key [home] 'back-to-indentation)
@@ -38,22 +37,37 @@ Doesn't mess with special buffers."
     (seq-each
      #'kill-buffer
      (delete (current-buffer) (seq-filter #'buffer-file-name (buffer-list))))))
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
 
 (global-set-key (kbd "C-x p k") 'project-kill-other-buffers)
 (global-set-key (kbd "s-k") 'kill-other-buffers)
-(add-hook 'ediff-mode-hook (lambda () (disable-theme 'doom-molokai)))
-(add-hook 'ediff-quit-session-group-hook (lambda () (enable-theme 'doom-molokai)))
+(global-set-key (kbd "<M-down>") 'move-line-down)
+(global-set-key (kbd "<M-up>") 'move-line-up)
 
 (global-set-key (kbd "<C-return>") 'new-blank-line)
 (global-set-key (kbd "<S-return>") 'eval-last-sexp)
 ;; (setq debug-on-message ".*Error in post-command-hook.*")
 (require 'package)
-(setq package-archives '(
-                         ("gnu"   . "https://elpa.gnu.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ;; ("gnu" . "http://elpa.emacs-china.org/gnu/")
-                         ;; ("melpa" . "http://elpa.emacs-china.org/melpa/")
-                         ))
+;; (setq package-archives '(
+;;                          ("gnu"   . "https://elpa.gnu.org/packages/")
+;;                          ("melpa" . "https://melpa.org/packages/")
+;;                          ;; ("gnu" . "http://elpa.emacs-china.org/gnu/")
+;;                          ;; ("melpa" . "http://elpa.emacs-china.org/melpa/")
+;;                          ))
 (package-initialize)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -62,12 +76,12 @@ Doesn't mess with special buffers."
  ;; If there is more than one, they won't work right.
  '(company-dabbrev-downcase nil)
  '(company-dabbrev-ignore-case t)
- '(company-minimum-prefix-length 3)
  '(context-menu-mode t)
  '(create-lockfiles nil)
- '(custom-enabled-themes '(doom-dracula))
+ '(cua-mode t)
+ '(custom-enabled-themes '(leuven-dark))
  '(custom-safe-themes
-   '("8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
+   '("7d04630548e41fc6395458b6bc0af06853b019e89169bca9f2461f74098d75de" "9013233028d9798f901e5e8efb31841c24c12444d3b6e92580080505d56fd392" "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e" "8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
  '(dap-java-default-debug-port 11550)
  '(dired-dwim-target t)
  '(dumb-jump-ignore-context t)
@@ -78,38 +92,45 @@ Doesn't mess with special buffers."
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
  '(ejc-candidates-uppercase t)
  '(ejc-show-result-bottom t)
- '(eww-search-prefix "https://cn.bing.com/search?ensearch=1&q=")
- '(fido-vertical-mode t)
+ '(eww-search-prefix "https://cn.bing.com/search?q=")
  '(fill-column 200)
- '(global-tab-line-mode t)
+ '(global-tab-line-mode nil)
  '(helm-completion-style 'helm)
  '(indent-tabs-mode nil)
  '(lsp-file-watch-threshold 40000)
- '(lsp-log-io nil)
+ '(lsp-java-jdt-ls-prefer-native-command t)
+ '(lsp-modeline-code-actions-enable nil)
+ '(lsp-modeline-diagnostics-enable nil)
+ '(lsp-ui-sideline-enable nil)
  '(lsp-ui-sideline-show-code-actions nil)
+ '(lsp-warn-no-matched-clients nil)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
  '(nrepl-sync-request-timeout 60)
  '(org-hide-emphasis-markers t)
  '(org-startup-indented t)
  '(org-table-convert-region-max-lines 9999999)
+ '(organic-green-version 2)
  '(package-selected-packages
-   '(vdiff-magit rg flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(eldoc-box eglot organic-green-theme treesit-auto dape ejira lsp-pyright elpy js2-mode yasnippet-snippets vdiff-magit rg flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
  '(read-buffer-completion-ignore-case t)
+ '(read-extended-command-predicate 'command-completion-default-include-p)
  '(require-final-newline nil)
  '(scroll-preserve-screen-position nil)
  '(shr-inhibit-images t)
  '(url-proxy-services '(("https" . "192.168.100.39:16823")))
- '(web-mode-code-indent-offset 4)
+ '(warning-suppress-log-types '((emacs)))
+ '(web-mode-code-indent-offset 2)
  '(web-mode-enable-auto-expanding t)
  '(web-mode-enable-auto-indentation nil)
- '(web-mode-enable-control-block-indentation nil))
+ '(web-mode-enable-control-block-indentation nil)
+ '(web-mode-markup-indent-offset 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(eglot-highlight-symbol-face ((t (:inherit bold)))))
 ;; load notes
 ;; (let ((filename "~/.notes.org"))
 ;;   (when (file-exists-p filename)
@@ -117,18 +138,64 @@ Doesn't mess with special buffers."
 ;; lsp-java configuration start
 (setenv "MAVEN_HOME"  "/usr/share/maven")
 (setenv "LSP_USE_PLISTS"  "true")
+
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+;; (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
+
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (setq use-package-always-ensure t)
 ;; (use-package projectile)
 (use-package flycheck)
 (use-package yasnippet :config (yas-global-mode))
-(use-package lsp-mode :hook ((lsp-mode . lsp-enable-which-key-integration))
+(use-package lsp-mode
+  :hook (
+         (lsp-mode . lsp-enable-which-key-integration)
+         ;; (web-mode . lsp-deferred)
+         ;; (java-mode . lsp-deferred)
+         (typescript-mode . lsp-deferred)
+         (js2-mode . lsp-deferred)
+         ;; (js-ts-mode . lsp-deferred)
+         (lua-mode . lsp-deferred)
+         )
+  :commands (lsp lsp-deferred)
   )
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp-deferred))))  ; or lsp-deferred
 (use-package hydra)
 (use-package company)
+(add-hook 'after-init-hook 'global-company-mode)
 (use-package lsp-ui)
 (use-package which-key :config (which-key-mode))
-(use-package lsp-java :config (add-hook 'java-mode-hook 'lsp))
+(use-package lsp-java)
 ;; (use-package lsp-java)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
@@ -146,13 +213,13 @@ Doesn't mess with special buffers."
   (push ".*/main/webpack/.*" lsp-file-watch-ignored) ; node webpack
   )
 (setq lsp-java-java-path "/usr/bin/java")
-(setq lsp-java-configuration-runtimes '[(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64" :default t)
+(setq lsp-java-configuration-runtimes '[(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :default t)
                                         (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")
 					])
 ;; current VSCode defaults
-(setq lsp-java-vmargs '("-Xmx2560m" "-Xms100m" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
+(setq lsp-java-vmargs '("-noverify" "-XX:+UseStringDeduplication" "-Xmx3G" "-Xms100m" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
 (setq lsp-java-autobuild-enabled nil)
-(setq gc-cons-threshold 200000000)
+(setq gc-cons-threshold 80000000)
 (setq read-process-output-max (* 3072 2048)) ;; 3mb
 (setq lsp-idle-delay 0.500)
 ;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
@@ -160,11 +227,11 @@ Doesn't mess with special buffers."
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-c") 'dap-continue)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-n") 'dap-next)))
-(add-hook 'java-mode-hook (lambda () (local-unset-key (kbd "M-n"))))
+;; (add-hook 'java-mode-hook (lambda () (local-unset-key (kbd "M-n"))))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-q") 'dap-disconnect)))
-(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'lsp-execute-code-action)))
-(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
-(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
+;; (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "<M-return>") 'lsp-execute-code-action)))
+;; (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
+;; (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "<f6>") 'dap-tooltip-at-point)))
 (dap-register-debug-template
   "Java Attach"
@@ -183,7 +250,6 @@ Doesn't mess with special buffers."
 (use-package avy)
 ;; (setq tramp-default-method "ssh")
 ;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-(add-hook 'after-init-hook 'global-company-mode)
 
 (setq-default tab-width 4)
 (global-set-key [remap dabbrev-expand] 'hippie-expand)
@@ -207,6 +273,7 @@ Doesn't mess with special buffers."
 (add-to-list 'auto-mode-alist '("\\.jspf\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tag\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.xhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
 (setq web-mode-engines-alist
       '(("jsp"    . "\\.jspf\\'"))
       )
@@ -252,6 +319,7 @@ Doesn't mess with special buffers."
 (use-package doom-themes)
 (use-package lua-mode)
 (use-package nov)
+(use-package js2-mode)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 (global-set-key (kbd "C-=") 'er/expand-region)
 
@@ -263,26 +331,25 @@ Doesn't mess with special buffers."
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-(add-hook 'java-mode-hook 'display-line-numbers-mode)
+(add-hook 'java-ts-mode-hook 'display-line-numbers-mode)
 (add-hook 'web-mode-hook 'display-line-numbers-mode)
 (add-hook 'lua-mode-hook 'display-line-numbers-mode)
-(add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
-(add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
+(add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "<M-->") 'lsp-ui-find-next-reference)))
+(add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
 (add-hook 'lua-mode-hook (lambda () (local-set-key (kbd "C-M-=") 'lua-goto-matching-block)))
 (add-hook 'org-mode-hook (lambda () (visual-line-mode 1)))
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-(add-hook 'js-ts-mode-hook #'lsp-deferred)
-(add-hook 'js-ts-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
-(add-hook 'js-ts-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
-(add-hook 'typescript-mode-hook #'lsp-deferred)
-(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-down>") 'lsp-ui-find-next-reference)))
-(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "<M-up>") 'lsp-ui-find-prev-reference)))
-(add-hook 'lua-mode-hook #'lsp-deferred)
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
+(add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
+(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
+(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
 (pdf-loader-install)
 
-;; (use-package treesit-auto
-;;   :config
-;;   (global-treesit-auto-mode))
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 (use-package ejc-sql)
 (setq clomacs-httpd-default-port 8090)
 (require 'ejc-company)
@@ -306,46 +373,126 @@ Doesn't mess with special buffers."
 (add-hook 'ejc-sql-minor-mode-hook (lambda () (local-set-key (kbd "C-q") 'ejc-quit-connection )))
 (add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-n") 'ejc-show-next-result )))
 (add-hook 'ejc-result-mode-hook (lambda () (local-set-key (kbd "C-M-p") 'ejc-show-prev-result )))
+(ejc-create-connection
+ "chengdu"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "Cintra$2024"
+ :user "etix_app"
+ :port "1521"
+ :host "192.168.100.10"
+ :dbname "chn"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db1"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "Cintra$2024"
+ :user "etix_dml"
+ :port "1521"
+ :host "10.10.1.100"
+ :dbname "AWS_TEST_1"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db1-kk"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "Cintra$2024"
+ :user "kk_app"
+ :port "1521"
+ :host "10.10.1.100"
+ :dbname "AWS_TEST_1"
+ :dbtype "oracle:sid"
+ :separator ";")
+
+(ejc-create-connection
+ "aws-db2"
+ :classpath "[/home/huang/.m2/repository/com/oracle/jdbc/ojdbc8/12.2.0.1/ojdbc8-12.2.0.1.jar]"
+ :password "Cintra$2024"
+ :user "etix_dml"
+ :port "1521"
+ :host "10.10.1.101"
+ :dbname "AWS_TEST_2"
+ :dbtype "oracle:sid"
+ :separator ";")
+
 
 (setq lsp-sqls-workspace-config-path nil)
+(setq lsp-sqls-connections
+      '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
 
+;; (add-hook 'java-ts-mode-hook 'eglot-ensure)
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
-               `(java-ts-mode . ("/home/huang/jdtls/jdt-language-server-1.24.0-202306011728/bin/jdtls" :initializationOptions
-                              (:settings
-                               (:java
-                                (:configuration
-                                 (:runtime [(:name "JavaSE-11" :path "/usr/lib/jvm/java-11-openjdk-amd64" :default t)
-                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
-                                 ;; :format (:settings (:url ,(expand-file-name (locate-user-emacs-file "cache/eclipse-java-google-style.xml"))
-                                 ;; :profile "GoogleStyle"))
-                                 ;; NOTE: https://github.com/redhat-developer/vscode-java/issues/406#issuecomment-356303715
-                                 ;; > We enabled it by default so that workspace-wide errors can be reported (eg. removing a public method in one class would cause compilation errors in other files consuming that method).
-                                 ;; for large workspaces, it may make sense to be able to disable autobuild if it negatively impacts performance.
-                                 :autobuild (:enabled t)
-                                 ;; https://github.com/dgileadi/vscode-java-decompiler
-                                 :contentProvider (:preferred "fernflower")))
-                               ;; WIP: support non standard LSP `java/classFileContents', `Location' items that have a `jdt://...' uri
-                               ;; https://github.com/eclipse/eclipse.jdt.ls/issues/1384
-                               ;; nvim impl demo: https://github.com/mfussenegger/dotfiles/commit/3cddf73cd43120da2655e2df6d79bdfd06697f0e
-                               ;; lsp-java impl demo: https://github.com/emacs-lsp/lsp-java/blob/master/lsp-java.el
-                               :extendedClientCapabilities (:classFileContentsSupport t)
-                               ;; bundles: decompilers, etc.
-                               ;; https://github.com/dgileadi/dg.jdt.ls.decompiler
-                               ;; :bundles ,(let ((bundles-dir (expand-file-name (locate-user-emacs-file "cache/language-server/java/bundles" user-emacs-directory)))
-                               ;;                 jdtls-bundles)
-                               ;;             (->> (when (file-directory-p bundles-dir)
-                               ;;                    (directory-files bundles-dir t "\\.jar$"))
-                               ;;                  (append jdtls-bundles)
-                               ;;                  (apply #'vector)))
+               `(java-ts-mode . ("/home/huang/jdtls/bin/jdtls" :initializationOptions
+                              (
+                               :settings
+                               (
+                                :java
+                                (
+                                 :autobuild (:enabled :json-false)
+                                 :configuration (:runtimes [(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :sources "/usr/local/jdk-11.0.21+9/lib/src.zip" :default t)
+                                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
+                                 )
+                                )
+                               :bundles ["/home/huang/jdtls/com.microsoft.java.debug.plugin-0.51.1.jar"]
                                )
                               )))
-  (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
-(define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
-(define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
-(add-hook 'eglot-mode-hook 'company-mode)
-)
+  (add-to-list 'eglot-server-programs `(js-ts-mode . ("typescript-language-server" "--stdio")))
 
+  
+  (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
+  (define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
+  (define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
+  (add-hook 'eglot-mode-hook 'company-mode)
+  )
+(use-package eldoc-box)
+(add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-mode t)
+;; (load "/home/huang/.emacs.d/elpa/eldoc-posframe.el")
+;; (require 'eldoc-posframe)
+(use-package dape
+  ;; :preface
+  ;; By default dape shares the same keybinding prefix as `gud'
+  ;; If you do not want to use any prefix, set it to nil.
+  ;; (setq dape-key-prefix "\C-x\C-a")
+
+  ;; :hook
+  ;; Save breakpoints on quit
+  ;; ((kill-emacs . dape-breakpoint-save)
+  ;; Load breakpoints on startup
+  ;;  (after-init . dape-breakpoint-load))
+
+  ;; :init
+  ;; To use window configuration like gud (gdb-mi)
+  ;; (setq dape-buffer-window-arrangement 'gud)
+
+  :config
+  ;; Info buffers to the right
+  (setq dape-buffer-window-arrangement 'right)
+
+  ;; Global bindings for setting breakpoints with mouse
+  (dape-breakpoint-global-mode)
+  )
+(add-to-list 'dape-configs
+               `(java-attach
+                 modes (java-mode java-ts-mode)
+                 fn (lambda (config)
+                      (with-current-buffer
+                          (find-file-noselect (expand-file-name (plist-get config :program)
+                                                                (project-root (project-current))))
+                          (thread-first
+                            config
+                            (plist-put 'hostname "localhost")
+                            (plist-put 'port (eglot-execute-command (eglot-current-server)
+                                                                    "vscode.java.startDebugSession" nil))
+                            )))
+                 :program dape-buffer-default
+                 :projectName "web-online"
+                 :type "java"
+                 :request "attach"
+                 :hostName "localhost"
+                 :port 11550))
 (setq message-send-mail-function 'ignore)
 (setq rmail-enable nil)
 (setq gnus-select-method
@@ -363,7 +510,12 @@ Doesn't mess with special buffers."
 (setq smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg"))
 (setq smtpmail-debug-info t)
 (setq smtpmail-debug-verb t)
-(use-package helm)
+(use-package helm
+  :ensure t
+  :init
+  (helm-mode 1))
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "M-x") 'helm-M-x)
 (use-package helm-lsp)
 (use-package helm-ag)
 (use-package helm-xref)
@@ -372,9 +524,7 @@ Doesn't mess with special buffers."
 (global-set-key (kbd "C-S-i") 'helm-imenu)
 (global-set-key (kbd "C-S-s") 'helm-occur)
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
-(add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
-;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
-;; (global-set-key (kbd "M-x") 'helm-M-x)
+;; (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
 (defun helm-do-grep-ag-root (arg)
   "Preconfigured `helm' for grepping with AG in `project-root'.
 With prefix arg prompt for type if available with your AG
@@ -385,6 +535,7 @@ version."
    (expand-file-name
     (project-root
      (project-current t))) arg))
+
 (defalias 'yes-or-no-p 'y-or-n-p)
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
