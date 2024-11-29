@@ -74,8 +74,9 @@ Doesn't mess with special buffers."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-dabbrev-downcase nil)
- '(company-dabbrev-ignore-case t)
+ '(consult-preview-key 'any)
+ '(consult-ripgrep-args
+   "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /   --smart-case --no-heading --with-filename --line-number --search-zip")
  '(context-menu-mode t)
  '(create-lockfiles nil)
  '(cua-mode t)
@@ -90,20 +91,20 @@ Doesn't mess with special buffers."
  '(ediff-show-ancestor t)
  '(ediff-split-window-function 'split-window-horizontally)
  '(ediff-window-setup-function 'ediff-setup-windows-plain)
+ '(editorconfig-mode t)
+ '(eglot-extend-to-xref t)
+ '(eglot-java-eclipse-jdt-args
+   '("-Xmx1G" "-Xmx3G" "--add-modules=ALL-SYSTEM" "--add-opens" "java.base/java.util=ALL-UNNAMED" "--add-opens" "java.base/java.lang=ALL-UNNAMED" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
+ '(eglot-send-changes-idle-time 1)
  '(ejc-candidates-uppercase t)
  '(ejc-show-result-bottom t)
+ '(embark-prompter 'embark-completing-read-prompter)
  '(eww-search-prefix "https://cn.bing.com/search?q=")
  '(fill-column 200)
  '(global-tab-line-mode nil)
- '(helm-completion-style 'helm)
  '(indent-tabs-mode nil)
  '(lsp-file-watch-threshold 40000)
  '(lsp-java-jdt-ls-prefer-native-command t)
- '(lsp-modeline-code-actions-enable nil)
- '(lsp-modeline-diagnostics-enable nil)
- '(lsp-ui-sideline-enable nil)
- '(lsp-ui-sideline-show-code-actions nil)
- '(lsp-warn-no-matched-clients nil)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
  '(nrepl-sync-request-timeout 60)
@@ -112,13 +113,14 @@ Doesn't mess with special buffers."
  '(org-table-convert-region-max-lines 9999999)
  '(organic-green-version 2)
  '(package-selected-packages
-   '(eldoc-box eglot organic-green-theme treesit-auto dape ejira lsp-pyright elpy js2-mode yasnippet-snippets vdiff-magit rg flycheck eldoc popup clojure-mode helm-core cider avy async magit helm-lsp dap-mode gnu-elpa-keyring-update ejc-company ejc-sql lua-mode lsp-java lsp-ui lsp-mode nov ereader ox-epub helm-xref helm-ag helm hydra lsp-ivy ivy dumb-jump zenburn-theme yasnippet which-key web-mode spacemacs-theme pdf-tools org-superstar flow-minor-mode expand-region doom-themes company atom-one-dark-theme))
+   '(apheleia async atom-one-dark-theme avy cider clojure-mode company consult corfu dap-mode dape doom-themes dumb-jump ejc-company ejc-sql ejira eldoc eldoc-box elpy embark embark-consult ereader expand-region flow-minor-mode flymake-eslint gnu-elpa-keyring-update hydra ivy js2-mode lsp-ivy lsp-java lsp-mode lsp-pyright lsp-ui lua-mode magit marginalia nov orderless org-superstar organic-green-theme ox-epub pdf-tools popup rg spacemacs-theme treesit-auto vdiff-magit vertico web-mode which-key yasnippet yasnippet-snippets zenburn-theme))
  '(read-buffer-completion-ignore-case t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
  '(require-final-newline nil)
  '(scroll-preserve-screen-position nil)
  '(shr-inhibit-images t)
  '(url-proxy-services '(("https" . "192.168.100.39:16823")))
+ '(vertico-cycle t)
  '(warning-suppress-log-types '((emacs)))
  '(web-mode-code-indent-offset 2)
  '(web-mode-enable-auto-expanding t)
@@ -130,7 +132,11 @@ Doesn't mess with special buffers."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(eglot-highlight-symbol-face ((t (:inherit bold)))))
+ '(eglot-highlight-symbol-face ((t (:inherit bold))))
+ '(lsp-face-highlight-read ((t (:inherit bold :underline t))))
+ '(lsp-face-highlight-textual ((t (:inherit bold))))
+ '(lsp-face-highlight-write ((t (:inherit bold :weight bold))))
+ '(vertico-current ((t (:inherit region :extend t)))))
 ;; load notes
 ;; (let ((filename "~/.notes.org"))
 ;;   (when (file-exists-p filename)
@@ -139,64 +145,38 @@ Doesn't mess with special buffers."
 (setenv "MAVEN_HOME"  "/usr/share/maven")
 (setenv "LSP_USE_PLISTS"  "true")
 
-(defun lsp-booster--advice-json-parse (old-fn &rest args)
-  "Try to parse bytecode instead of json."
-  (or
-   (when (equal (following-char) ?#)
-     (let ((bytecode (read (current-buffer))))
-       (when (byte-code-function-p bytecode)
-         (funcall bytecode))))
-   (apply old-fn args)))
-(advice-add (if (progn (require 'json)
-                       (fboundp 'json-parse-buffer))
-                'json-parse-buffer
-              'json-read)
-            :around
-            #'lsp-booster--advice-json-parse)
-
-(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
-  "Prepend emacs-lsp-booster command to lsp CMD."
-  (let ((orig-result (funcall old-fn cmd test?)))
-    (if (and (not test?)                             ;; for check lsp-server-present?
-             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
-             lsp-use-plists
-             (not (functionp 'json-rpc-connection))  ;; native json-rpc
-             (executable-find "emacs-lsp-booster"))
-        (progn
-          (message "Using emacs-lsp-booster for %s!" orig-result)
-          (cons "emacs-lsp-booster" orig-result))
-      orig-result)))
-;; (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
-
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (setq use-package-always-ensure t)
 ;; (use-package projectile)
-(use-package flycheck)
 (use-package yasnippet :config (yas-global-mode))
 (use-package lsp-mode
   :hook (
          (lsp-mode . lsp-enable-which-key-integration)
          ;; (web-mode . lsp-deferred)
          ;; (java-mode . lsp-deferred)
-         (typescript-mode . lsp-deferred)
-         (js2-mode . lsp-deferred)
+         ;; (js2-mode . lsp-deferred)
          ;; (js-ts-mode . lsp-deferred)
+         (typescript-ts-mode . lsp-deferred)
+         (tsx-ts-mode . lsp-deferred)
          (lua-mode . lsp-deferred)
          )
   :commands (lsp lsp-deferred)
   )
-(use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp-deferred))))  ; or lsp-deferred
 (use-package hydra)
 (use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
+;; (use-package corfu
+;;   :custom
+;;   (corfu-auto t)                 ;; Enable auto completion
+;;   :hook ((prog-mode . corfu-mode)
+;;          (shell-mode . corfu-mode)
+;;          (eshell-mode . corfu-mode))
+;;   :init
+;;   (global-corfu-mode))
+
 (use-package lsp-ui)
 (use-package which-key :config (which-key-mode))
 (use-package lsp-java)
-;; (use-package lsp-java)
 (use-package dap-mode :after lsp-mode :config (dap-auto-configure-mode))
 (use-package dap-java :ensure nil)
 (use-package lsp-treemacs)
@@ -239,7 +219,7 @@ Doesn't mess with special buffers."
         :type "java"
         :request "attach"
         :hostName "localhost"
-        :projectName "jdt.ls-java-project"
+        :projectName "web-online"
         :port 11550))
 ;; lsp-java configuration end
 (use-package markdown-mode
@@ -248,6 +228,15 @@ Doesn't mess with special buffers."
   :init (setq markdown-command "multimarkdown"))
 (use-package org-superstar)
 (use-package avy)
+;; to use prettier
+(use-package apheleia
+  :ensure t
+  :config
+  (dolist (hook '(tsx-ts-mode-hook
+                  typescript-ts-mode-hook))
+    (add-hook hook (lambda () (apheleia-mode +1))))
+  )
+(use-package magit)
 ;; (setq tramp-default-method "ssh")
 ;; (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
 
@@ -260,7 +249,7 @@ Doesn't mess with special buffers."
 (global-set-key (kbd "C-S-v") 'scroll-down-command)
 (global-set-key (kbd "C-S-c") 'scroll-up-command)
 (global-set-key (kbd "<f5>") 'revert-buffer)
-;; (global-set-key (kbd "C-M-i") 'company-complete)
+(global-set-key (kbd "C-M-i") 'company-complete)
 
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
@@ -311,7 +300,7 @@ Doesn't mess with special buffers."
 ;; (use-package company-tabnine :ensure t)
 ;; (add-to-list 'company-backends #'company-tabnine)
 ;; Trigger completion immediately.
-;; (setq company-idle-delay 0)
+(setq company-idle-delay 0.5)
 ;; end tabnine setting.
 
 (use-package expand-region)
@@ -343,8 +332,8 @@ Doesn't mess with special buffers."
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
 (add-hook 'js2-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
-(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
-(add-hook 'typescript-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
+(add-hook 'typescript-ts-mode-hook (lambda () (local-set-key (kbd "M--") 'lsp-ui-find-next-reference)))
+(add-hook 'typescript-ts-mode-hook (lambda () (local-set-key (kbd "M-+") 'lsp-ui-find-prev-reference)))
 (pdf-loader-install)
 
 (use-package treesit-auto
@@ -418,35 +407,72 @@ Doesn't mess with special buffers."
  :separator ";")
 
 
-(setq lsp-sqls-workspace-config-path nil)
-(setq lsp-sqls-connections
-      '(((alias . "pg-chengdu") (driver . "postgresql") (dataSourceName . "host=192.168.100.21 port=5432 user=postgres password=etix.com@123 dbname=postgres sslmode=disable"))))
-
-;; (add-hook 'java-ts-mode-hook 'eglot-ensure)
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                `(java-ts-mode . ("/home/huang/jdtls/bin/jdtls" :initializationOptions
-                              (
-                               :settings
-                               (
-                                :java
-                                (
-                                 :autobuild (:enabled :json-false)
-                                 :configuration (:runtimes [(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :sources "/usr/local/jdk-11.0.21+9/lib/src.zip" :default t)
-                                                            (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
-                                 )
-                                )
-                               :bundles ["/home/huang/jdtls/com.microsoft.java.debug.plugin-0.51.1.jar"]
-                               )
-                              )))
-  (add-to-list 'eglot-server-programs `(js-ts-mode . ("typescript-language-server" "--stdio")))
+                                 (
+                                  :settings
+                                  (
+                                   :java
+                                   (
+                                    :configuration (:runtimes [(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :sources "/usr/local/jdk-11.0.21+9/lib/src.zip" :default t)
+                                                               (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])
+                                    :saveActions (:organizeImports t)
+                                    :completion (
+                                                 :enabled t
+                                                 :overwrite t
+                                                 :guessMethodArguments t
+                                                 :importOrder ["java" "javax" "jakarta" "org.apache" "org.hibernate" "org.json" "org" "co" "com" "io" "net" "redis" "software" "com.etix" "com.intellimark" "test"])
+                                    )
+                                   )
+                                  :bundles ["/home/huang/jdtls/com.microsoft.java.debug.plugin-0.51.1.jar"]
+                                  )
+                                 )))
+  (add-to-list 'eglot-server-programs `(js-ts-mode . ("/home/huang/.nvm/versions/node/v20.17.0/bin/typescript-language-server" "--stdio")))
+  (add-to-list 'eglot-server-programs `(typescript-ts-base-mode . ("/home/huang/.nvm/versions/node/v20.17.0/bin/typescript-language-server" "--stdio")))
 
   
   (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
   (define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
   (define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
   (add-hook 'eglot-mode-hook 'company-mode)
+  (add-hook 'java-ts-mode-hook (lambda ()
+                                 (remove-hook 'eglot-connect-hook 'eglot-signal-didChangeConfiguration)))
   )
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+;; (use-package flymake-eslint)
+;; (add-hook 'tsx-ts-mode-hook
+;;   (lambda ()
+;;     (flymake-eslint-enable)))
+;; (add-hook 'typescript-ts-mode-hook
+;;   (lambda ()
+;;     (flymake-eslint-enable)))
+;; (use-package eglot-java)
+;; (setq eglot-java-user-init-opts-fn 'custom-eglot-java-init-opts)
+;; (defun custom-eglot-java-init-opts (server eglot-java-eclipse-jdt)
+;;   "Custom options that will be merged with any default settings."
+;;   '(:settings
+;;     (                                                                                                                                           
+;;      :java                                                                                                                                      
+;;      (                                                                                                                                          
+;;       :configuration (:runtimes [(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :sources "/usr/local/jdk-11.0.21+9/lib/src.zip" :default t)
+;;                                  (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")])                                               
+;;       :saveActions (:organizeImports t)                                                                                                         
+;;       :completion (                                                                                                                             
+;;                    :enabled t                                                                                                                   
+;;                    :overwrite t                                                                                                                 
+;;                    :guessMethodArguments t                                                                                                      
+;;                    :importOrder ["java" "javax" "jakarta" "org" "co" "com" "io" "net" "software" "com.etix" "test"])
+;;       )                                                                                                                                         
+;;      )                                                                                                                                          
+;;     :bundles ["/home/huang/jdtls/com.microsoft.java.debug.plugin-0.51.1.jar"]                                                                   
+;;     ))
+;; (add-hook 'java-ts-mode-hook 'eglot-java-mode)
+;; (define-key eglot-mode-map (kbd "s-l r r") 'eglot-rename)
+;; (define-key eglot-mode-map (kbd "s-l g i") 'eglot-find-implementation)
+;; (define-key eglot-mode-map (kbd "<M-return>") 'eglot-code-actions)
+
 (use-package eldoc-box)
 (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-mode t)
 ;; (load "/home/huang/.emacs.d/elpa/eldoc-posframe.el")
@@ -510,31 +536,114 @@ Doesn't mess with special buffers."
 (setq smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg"))
 (setq smtpmail-debug-info t)
 (setq smtpmail-debug-verb t)
-(use-package helm
-  :ensure t
+
+;; Enable vertico
+(use-package vertico
   :init
-  (helm-mode 1))
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "M-x") 'helm-M-x)
-(use-package helm-lsp)
-(use-package helm-ag)
-(use-package helm-xref)
-(define-key lsp-mode-map [remap xref-find-apropos] #'helm-lsp-workspace-symbol)
-(global-set-key (kbd "C-S-n") 'helm-do-ag-project-root)
-(global-set-key (kbd "C-S-i") 'helm-imenu)
-(global-set-key (kbd "C-S-s") 'helm-occur)
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-;; (add-hook 'java-mode-hook (lambda () (local-set-key (kbd "C-S-o") 'helm-lsp-global-workspace-symbol)))
-(defun helm-do-grep-ag-root (arg)
-  "Preconfigured `helm' for grepping with AG in `project-root'.
-With prefix arg prompt for type if available with your AG
-version."
-  (interactive "P")
-  ;; (require 'helm-files)
-  (helm-grep-ag-1
-   (expand-file-name
-    (project-root
-     (project-current t))) arg))
+  (vertico-mode))
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
+;; Example configuration for Consult
+(use-package consult
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ("M-g e" . consult-compile-error)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("C-S-i" . consult-imenu)
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("C-S-n" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("C-S-s" . consult-line)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history))
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  :config
+  (consult-customize
+   consult-ripgrep :group nil)
+  )
+(use-package embark
+  :ensure t
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+;; lsp booster
+;; (defun lsp-booster--advice-json-parse (old-fn &rest args)
+;;   "Try to parse bytecode instead of json."
+;;   (or
+;;    (when (equal (following-char) ?#)
+;;      (let ((bytecode (read (current-buffer))))
+;;        (when (byte-code-function-p bytecode)
+;;          (funcall bytecode))))
+;;    (apply old-fn args)))
+;; (advice-add (if (progn (require 'json)
+;;                        (fboundp 'json-parse-buffer))
+;;                 'json-parse-buffer
+;;               'json-read)
+;;             :around
+;;             #'lsp-booster--advice-json-parse)
+
+;; (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+;;   "Prepend emacs-lsp-booster command to lsp CMD."
+;;   (let ((orig-result (funcall old-fn cmd test?)))
+;;     (if (and (not test?)                             ;; for check lsp-server-present?
+;;              (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+;;              lsp-use-plists
+;;              (not (functionp 'json-rpc-connection))  ;; native json-rpc
+;;              (executable-find "emacs-lsp-booster"))
+;;         (progn
+;;           (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+;;             (setcar orig-result command-from-exec-path))
+;;           (message "Using emacs-lsp-booster for %s!" orig-result)
+;;           (cons "emacs-lsp-booster" orig-result))
+;;       orig-result)))
+;; (advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (put 'narrow-to-region 'disabled nil)
