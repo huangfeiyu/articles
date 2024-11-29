@@ -103,7 +103,10 @@ Doesn't mess with special buffers."
  '(fill-column 200)
  '(global-tab-line-mode nil)
  '(indent-tabs-mode nil)
+ '(lsp-eslint-auto-fix-on-save t)
  '(lsp-file-watch-threshold 40000)
+ '(lsp-java-completion-import-order
+   ["java" "javax" "jakarta" "org.apache" "org.hibernate" "org.json" "org" "co" "com" "io" "net" "redis" "software" "com.etix" "com.intellimark" "test"])
  '(lsp-java-jdt-ls-prefer-native-command t)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
@@ -113,7 +116,7 @@ Doesn't mess with special buffers."
  '(org-table-convert-region-max-lines 9999999)
  '(organic-green-version 2)
  '(package-selected-packages
-   '(apheleia async atom-one-dark-theme avy cider clojure-mode company consult corfu dap-mode dape doom-themes dumb-jump ejc-company ejc-sql ejira eldoc eldoc-box elpy embark embark-consult ereader expand-region flow-minor-mode flymake-eslint gnu-elpa-keyring-update hydra ivy js2-mode lsp-ivy lsp-java lsp-mode lsp-pyright lsp-ui lua-mode magit marginalia nov orderless org-superstar organic-green-theme ox-epub pdf-tools popup rg spacemacs-theme treesit-auto vdiff-magit vertico web-mode which-key yasnippet yasnippet-snippets zenburn-theme))
+   '(apheleia async atom-one-dark-theme avy cider clojure-mode company consult corfu dap-mode dape doom-themes dumb-jump ejc-company ejc-sql ejira eldoc eldoc-box elpy embark embark-consult ereader expand-region flow-minor-mode flymake-eslint gnu-elpa-keyring-update hydra ivy js2-mode lsp-java lsp-mode lsp-ui lua-mode magit marginalia nov orderless org-superstar organic-green-theme ox-epub pdf-tools popup rg spacemacs-theme treesit-auto vdiff-magit vertico web-mode which-key yasnippet yasnippet-snippets zenburn-theme))
  '(read-buffer-completion-ignore-case t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
  '(require-final-newline nil)
@@ -153,11 +156,10 @@ Doesn't mess with special buffers."
   :hook (
          (lsp-mode . lsp-enable-which-key-integration)
          ;; (web-mode . lsp-deferred)
-         ;; (java-mode . lsp-deferred)
-         ;; (js2-mode . lsp-deferred)
-         ;; (js-ts-mode . lsp-deferred)
-         (typescript-ts-mode . lsp-deferred)
-         (tsx-ts-mode . lsp-deferred)
+         (java-ts-mode . lsp-deferred)
+         (js2-mode . lsp-deferred)
+         (js-ts-mode . lsp-deferred)
+         (typescript-ts-base-mode . lsp-deferred)
          (lua-mode . lsp-deferred)
          )
   :commands (lsp lsp-deferred)
@@ -192,7 +194,10 @@ Doesn't mess with special buffers."
   (push ".*\\.min\\.js$" lsp-file-watch-ignored) ; node
   (push ".*/main/webpack/.*" lsp-file-watch-ignored) ; node webpack
   )
-(setq lsp-java-java-path "/usr/bin/java")
+
+(with-eval-after-load 'js
+  (define-key js-mode-map (kbd "M-.") nil)
+)
 (setq lsp-java-configuration-runtimes '[(:name "JavaSE-11" :path "/usr/local/jdk-11.0.21+9" :default t)
                                         (:name "JavaSE-17" :path "/usr/lib/jvm/java-17-openjdk-amd64")
 					])
@@ -201,7 +206,6 @@ Doesn't mess with special buffers."
 (setq lsp-java-autobuild-enabled nil)
 (setq gc-cons-threshold 80000000)
 (setq read-process-output-max (* 3072 2048)) ;; 3mb
-(setq lsp-idle-delay 0.500)
 ;; (add-hook 'dap-stopped-hook (lambda (arg) (call-interactively #'dap-hydra)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-i") 'dap-step-in)))
 (add-hook 'dap-mode-hook (lambda () (local-set-key (kbd "M-o") 'dap-step-out)))
