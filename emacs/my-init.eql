@@ -1,5 +1,7 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 ;; (cua-mode 1)
 ;; (global-set-key (kbd "C-x v") nil)
 (global-set-key (kbd "C-x C-s") nil)
@@ -82,7 +84,12 @@ Doesn't mess with special buffers."
  '(cua-mode t)
  '(custom-enabled-themes '(leuven-dark))
  '(custom-safe-themes
-   '("7d04630548e41fc6395458b6bc0af06853b019e89169bca9f2461f74098d75de" "9013233028d9798f901e5e8efb31841c24c12444d3b6e92580080505d56fd392" "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e" "8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098" "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8" "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78" "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9" "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
+   '("7d04630548e41fc6395458b6bc0af06853b019e89169bca9f2461f74098d75de" "9013233028d9798f901e5e8efb31841c24c12444d3b6e92580080505d56fd392"
+     "88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e" "8c7e832be864674c220f9a9361c851917a93f921fedb7717b1b5ece47690c098"
+     "944d52450c57b7cbba08f9b3d08095eb7a5541b0ecfb3a0a9ecd4a18f3c28948" "aec7b55f2a13307a55517fdf08438863d694550565dee23181d2ebd973ebd6b8"
+     "2dd4951e967990396142ec54d376cced3f135810b2b69920e77103e0bcedfba9" "be84a2e5c70f991051d4aaf0f049fa11c172e5d784727e0b525565bb1533ec78"
+     "22ce392ec78cd5e512169f8960edf5cbbad70e01d3ed0284ea62ab813d4ff250" "b0e446b48d03c5053af28908168262c3e5335dcad3317215d9fdeb8bac5bacf9"
+     "e19ac4ef0f028f503b1ccafa7c337021834ce0d1a2bca03fcebc1ef635776bea" "0466adb5554ea3055d0353d363832446cd8be7b799c39839f387abb631ea0995" default))
  '(dap-java-default-debug-port 11550)
  '(dired-dwim-target t)
  '(dumb-jump-ignore-context t)
@@ -94,7 +101,8 @@ Doesn't mess with special buffers."
  '(editorconfig-mode t)
  '(eglot-extend-to-xref t)
  '(eglot-java-eclipse-jdt-args
-   '("-Xmx1G" "-Xmx3G" "--add-modules=ALL-SYSTEM" "--add-opens" "java.base/java.util=ALL-UNNAMED" "--add-opens" "java.base/java.lang=ALL-UNNAMED" "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
+   '("-Xmx1G" "-Xmx3G" "--add-modules=ALL-SYSTEM" "--add-opens" "java.base/java.util=ALL-UNNAMED" "--add-opens" "java.base/java.lang=ALL-UNNAMED"
+     "-javaagent:/home/huang/.m2/repository/org/projectlombok/lombok/1.18.22/lombok-1.18.22.jar"))
  '(eglot-send-changes-idle-time 1)
  '(ejc-candidates-uppercase t)
  '(ejc-show-result-bottom t)
@@ -108,6 +116,7 @@ Doesn't mess with special buffers."
  '(lsp-java-completion-import-order
    ["java" "javax" "jakarta" "org.apache" "org.hibernate" "org.json" "org" "co" "com" "io" "net" "redis" "software" "com.etix" "com.intellimark" "test"])
  '(lsp-java-jdt-ls-prefer-native-command t)
+ '(lsp-java-save-actions-organize-imports t)
  '(magit-diff-use-overlays nil)
  '(make-backup-files nil)
  '(nrepl-sync-request-timeout 60)
@@ -116,7 +125,9 @@ Doesn't mess with special buffers."
  '(org-table-convert-region-max-lines 9999999)
  '(organic-green-version 2)
  '(package-selected-packages
-   '(apheleia async atom-one-dark-theme avy cider clojure-mode company consult corfu dap-mode dape doom-themes dumb-jump ejc-company ejc-sql ejira eldoc eldoc-box elpy embark embark-consult ereader expand-region flow-minor-mode flymake-eslint gnu-elpa-keyring-update hydra ivy js2-mode lsp-java lsp-mode lsp-ui lua-mode magit marginalia nov orderless org-superstar organic-green-theme ox-epub pdf-tools popup rg spacemacs-theme treesit-auto vdiff-magit vertico web-mode which-key yasnippet yasnippet-snippets zenburn-theme))
+   '(csv-mode apheleia async atom-one-dark-theme avy cider clojure-mode company consult corfu dap-mode dape doom-themes dumb-jump ejc-company ejc-sql ejira eldoc eldoc-box elpy embark embark-consult
+              ereader expand-region flow-minor-mode flymake-eslint gnu-elpa-keyring-update hydra ivy js2-mode lsp-java lsp-mode lsp-ui lua-mode magit marginalia nov orderless org-superstar
+              organic-green-theme ox-epub pdf-tools popup rg spacemacs-theme treesit-auto vdiff-magit vertico web-mode which-key yasnippet yasnippet-snippets zenburn-theme))
  '(read-buffer-completion-ignore-case t)
  '(read-extended-command-predicate 'command-completion-default-include-p)
  '(require-final-newline nil)
@@ -156,7 +167,7 @@ Doesn't mess with special buffers."
   :hook (
          (lsp-mode . lsp-enable-which-key-integration)
          ;; (web-mode . lsp-deferred)
-         (java-ts-mode . lsp-deferred)
+         ;; (java-ts-mode . lsp-deferred)
          (js2-mode . lsp-deferred)
          (js-ts-mode . lsp-deferred)
          (typescript-ts-base-mode . lsp-deferred)
@@ -383,8 +394,8 @@ Doesn't mess with special buffers."
  :password "Cintra$2024"
  :user "etix_dml"
  :port "1521"
- :host "10.10.1.100"
- :dbname "AWS_TEST_1"
+ :host "ops-db.etixtest.com"
+ :dbname "aws_test"
  :dbtype "oracle:sid"
  :separator ";")
 
@@ -394,8 +405,8 @@ Doesn't mess with special buffers."
  :password "Cintra$2024"
  :user "kk_app"
  :port "1521"
- :host "10.10.1.100"
- :dbname "AWS_TEST_1"
+ :host "ops-db.etixtest.com"
+ :dbname "aws_test"
  :dbtype "oracle:sid"
  :separator ";")
 
